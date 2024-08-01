@@ -31,7 +31,7 @@ public class AccountService {
      * The registration will be successful iff the username is not blank, the password is at least 
      * 4 characters long, and an Account with that username does not already exist.
      * 
-     * @param account an Account object
+     * @param account an Account object without an account_id
      * @return a valid Account with the given data on success, null on failure
      */
     public Account registerAccount(Account account) {
@@ -43,5 +43,18 @@ public class AccountService {
         if (accountDAO.getAccount(account.getUsername()) != null) return null;
 
         return accountDAO.registerAccount(account);
+    }
+
+    /**
+     * Attempts to log in an existing account given an Account object without an account_id.
+     * 
+     * The login will be successful iff the username and password match those of a 
+     * real account existing on the database.
+     * 
+     * @param account an Account object without an account_id
+     * @return a valid Account with the given data on success, null on failure
+     */
+    public Account loginAccount(Account account) {
+        return accountDAO.loginAccount(account.getUsername(), account.getPassword());
     }
 }

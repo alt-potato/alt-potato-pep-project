@@ -14,6 +14,7 @@ import io.javalin.http.Context;
  * 
  * Endpoints:
  * - POST localhost:8080/register
+ * - POST localhost:8080/login
  * 
  * TODO: You will need to write your own endpoints and handlers for your controller. The endpoints you will need can be
  * found in readme.md as well as the test cases. You should refer to prior mini-project labs and lecture materials for 
@@ -36,12 +37,13 @@ public class SocialMediaController {
     public Javalin startAPI() {
         Javalin app = Javalin.create();
         app.post("/register", this::registrationHandler);
+        app.post("/login", this::loginHandler);
 
         return app;
     }
 
     /**
-     * POST localhost:8080/register
+     * POST /register
      * 
      * The body will contain a representation of a JSON Account, but will not contain an account_id.
      * 
@@ -68,5 +70,30 @@ public class SocialMediaController {
         }
     }
 
+    /**
+     * POST /login
+     * 
+     * The request body will contain a JSON representation of an Account, not containing an account_id. In the future, 
+     * this action may generate a Session token to allow the user to securely use the site.
+     * 
+     * The login will be successful iff the username and password provided in the request body JSON match a 
+     * real account existing on the database. If successful, the response body should contain a JSON of the account 
+     * in the response body, including its account_id. The response status should be 200 OK, which is the default.
+     * If the login is not successful, the response status should be 401. (Unauthorized)
+     * 
+     * @param ctx The Javalin Context object manages information about both the HTTP request and response.
+     * @throws JsonProcessingException will be thrown if there is an issue converting JSON into an object.
+     */
+    private void loginHandler(Context ctx) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        Account account = mapper.readValue(ctx.body(), Account.class);
+        Account loggedinAccount = accountService.loginAccount(account);
 
+        if (loggedinAccount != null) {
+            ctx.json(mapper.writeValueAsString(loggedinAccount));
+            ctx.status(200);  // OK
+        } else {
+            ctx.status(401);  // unauthorized
+        }
+    }
 }

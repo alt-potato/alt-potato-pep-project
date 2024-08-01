@@ -43,8 +43,9 @@ public class AccountDAO {
 
     /**
      * Retrieves the account associated with a given username.
+     * 
      * @param username The username to search for.
-     * @return an Account object with the account data associated with the given username, null if does not exist
+     * @return an Account object with the account data associated with the given username, or null if it does not exist
      */
     public Account getAccount(String username) {
         Connection connection = ConnectionUtil.getConnection();
@@ -60,6 +61,37 @@ public class AccountDAO {
                 Account acc = new Account(rs.getInt("account_id"),
                                           rs.getString("username"),
                                           rs.getString("password"));
+                return acc;
+            }
+        } catch(SQLException e) {
+            System.out.println(e.getMessage());
+        }
+
+        return null;
+    }
+
+    /**
+     * Retrieves the account associated with a given username and password.
+     * 
+     * @param username The username to match.
+     * @param password The password to match.
+     * @return an Account object with the account data associated with the given info, or null if there is not one
+     */
+    public Account loginAccount(String username, String password) {
+        Connection connection = ConnectionUtil.getConnection();
+        
+        try {
+            String sql = "select * from account where username = ? and password = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+
+            preparedStatement.setString(1, username);
+            preparedStatement.setString(2, password);
+
+            ResultSet rs = preparedStatement.executeQuery();
+            while(rs.next()) {
+                Account acc = new Account(rs.getInt("account_id"),
+                                          rs.getString("username"),
+                                          rs.getString("password"));  // this is probably not very secure
                 return acc;
             }
         } catch(SQLException e) {
