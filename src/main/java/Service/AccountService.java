@@ -35,12 +35,12 @@ public class AccountService {
      * @return a valid Account with the given data on success, null on failure
      */
     public Account registerAccount(Account account) {
-        // check if username is not blank
+        // reject if username is blank
         if (account.getUsername().isBlank()) return null;
-        // check if password is at least 4 characters long
-        if (account.getPassword().length() >= 4) return null;  // come on. you could brute force that in like 10 minutes.
-        // check if username does not already exist
-        if (!accountDAO.getAccount(account.getUsername()).equals(null)) return null;
+        // reject if password is less than 4 characters long
+        if (account.getPassword().length() < 4) return null;  // come on. you could brute force that in like 10 minutes.
+        // reject if username already exists
+        if (accountDAO.getAccount(account.getUsername()) != null) return null;
 
         return accountDAO.registerAccount(account);
     }
