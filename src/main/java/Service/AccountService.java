@@ -20,11 +20,6 @@ public class AccountService {
         accountDAO = new AccountDAO();
     }
 
-    // just in case
-    public AccountService (AccountDAO accountDAO){
-        this.accountDAO = accountDAO;
-    }
-
     /**
      * Attempts to register a new account given a new Account object without an account_id.
      * 

@@ -16,18 +16,14 @@ import io.javalin.http.Context;
  * This class will create a Javalin API with endpoints when the startAPI method is called.
  * 
  * Endpoints:
- * - POST localhost:8080/register
- * - POST localhost:8080/login
- * - POST localhost:8080/messages
- * - GET localhost:8080/messages
- * - GET localhost:8080/messages/{message_id}
- * - DELETE localhost:8080/messages/{message_id}
- * - PATCH localhost:8080/messages/{message_id}
- * - GET localhost:8080/accounts/{account_id}/messages.
- * 
- * TODO: You will need to write your own endpoints and handlers for your controller. The endpoints you will need can be
- * found in readme.md as well as the test cases. You should refer to prior mini-project labs and lecture materials for 
- * guidance on how a controller may be built.
+ * - POST   /register
+ * - POST   /login
+ * - POST   /messages
+ * - GET    /messages
+ * - GET    /messages/{message_id}
+ * - DELETE /messages/{message_id}
+ * - PATCH  /messages/{message_id}
+ * - GET    /accounts/{account_id}/messages
  */
 public class SocialMediaController {
     AccountService accountService;
