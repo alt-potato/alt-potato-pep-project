@@ -63,7 +63,6 @@ public class MessageDAO {
         List<Message> messages = new ArrayList<>();
 
         try {
-            //Write SQL logic here
             String sql = "select * from message";
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             ResultSet rs = preparedStatement.executeQuery();
