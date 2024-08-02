@@ -75,6 +75,30 @@ public class MessageService {
         Message message = this.messageDAO.getMessageByID(id);
         int result = this.messageDAO.deleteMessageByID(id);
 
-        return result == 0 ? null : message;
+        return result == 0 ? null : message;  // maybe (result == 1) would be better, since the intended effect is one deletion?
+    }
+
+    /**
+     * Updates the message associated with a given message_id with the given message_content.
+     * 
+     * The update of a message should be successful iff the message id already exists and the new message_text is 
+     * not blank and is not over 255 characters.
+     * 
+     * @param id 
+     * @param message_content
+     * @return a Message object with the updated message
+     */
+    public Message updateMessageByID(int id, String message_content) {
+        // reject if message id does not exist
+        if (this.messageDAO.getMessageByID(id) == null) return null;
+        // reject if message_text is blank
+        if (message_content.isBlank()) return null;
+        // reject if message_text is over 255 characters
+        if (message_content.length() > 255) return null;
+
+        int result = this.messageDAO.updateMessageByID(id, message_content);
+        Message newMessage = this.messageDAO.getMessageByID(id);
+
+        return result == 0 ? null : newMessage;
     }
 }

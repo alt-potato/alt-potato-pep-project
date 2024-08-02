@@ -22,6 +22,7 @@ import io.javalin.http.Context;
  * - GET localhost:8080/messages
  * - GET localhost:8080/messages/{message_id}
  * - DELETE localhost:8080/messages/{message_id}
+ * - PATCH localhost:8080/messages/{message_id}
  * 
  * TODO: You will need to write your own endpoints and handlers for your controller. The endpoints you will need can be
  * found in readme.md as well as the test cases. You should refer to prior mini-project labs and lecture materials for 
@@ -49,6 +50,7 @@ public class SocialMediaController {
         app.get("/messages", this::messageGetHandler);
         app.get("/messages/{message_id}", this::messageGetByIDHandler);
         app.delete("/messages/{message_id}", this::messageDeleteByIDHandler);
+        app.patch("/messages/{message_id}", this::messageUpdateByIDHandler);
 
         return app;
     }
@@ -133,7 +135,7 @@ public class SocialMediaController {
             ctx.json(mapper.writeValueAsString(postedMessage));
             ctx.status(200);  // OK
         } else {
-            ctx.status(400);  // unauthorized
+            ctx.status(400);  // client error
         }
     }
 
@@ -189,6 +191,44 @@ public class SocialMediaController {
             if (message != null) ctx.json(message);
         } catch (Exception e) {
             System.out.println(e.getMessage());
+        }
+    }
+
+    /**
+     * PATCH /messages/{message_id}
+     * 
+     * The request body should contain a new message_text values to replace the message identified by message_id. The request body 
+     * can not be guaranteed to contain any other information.
+     * 
+     * The update of a message should be successful if and only if the message id already exists and the new message_text is 
+     * not blank and is not over 255 characters. If the update is successful, the response body should contain the 
+     * full updated message (including message_id, posted_by, message_text, and time_posted_epoch), and the response status should 
+     * be 200, which is the default. The message existing on the database should have the updated message_text.
+     * 
+     * If the update of the message is not successful for any reason, the response status should be 400. (Client error)
+     * 
+     * ctx The Javalin Context object manages information about both the HTTP request and response.
+     * @throws JsonProcessingException will be thrown if there is an issue converting JSON into an object.
+     */
+    private void messageUpdateByIDHandler(Context ctx) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        Message inputMessage = mapper.readValue(ctx.body(), Message.class);
+        String message_content = inputMessage.getMessage_text();
+
+        try {
+            int message_id = Integer.parseInt(ctx.pathParam("message_id"));
+
+            Message message = messageService.updateMessageByID(message_id, message_content);
+
+            if (message != null) {
+                ctx.json(mapper.writeValueAsString(message));
+                ctx.status(200);  // OK
+            } else {
+                ctx.status(400);  // client error
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            ctx.status(400);  // client error
         }
     }
 }

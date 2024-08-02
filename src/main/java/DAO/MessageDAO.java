@@ -132,4 +132,29 @@ public class MessageDAO {
 
         return 0;
     }
+
+    /**
+     * Updates the message associated with a given message_id with the given message_content.
+     * 
+     * @param id The message_id to search for.
+     * @param message_content The content to update the message with.
+     * @return the number of rows affected
+     */
+    public int updateMessageByID(int id, String message_content) {
+        Connection connection = ConnectionUtil.getConnection();
+        
+        try {
+            String sql = "update message set message_text = ? where message_id = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+
+            preparedStatement.setString(1, message_content);
+            preparedStatement.setInt(2, id);
+
+            return preparedStatement.executeUpdate();
+        } catch(SQLException e) {
+            System.out.println(e.getMessage());
+        }
+
+        return 0;
+    }
 }
