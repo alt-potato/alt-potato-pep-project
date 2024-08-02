@@ -1,5 +1,10 @@
 package DAO;
 
+import java.sql.*;
+
+import Model.Message;
+import Util.ConnectionUtil;
+
 /**
  * A DAO is a class that mediates the transformation of data between the format of objects in Java to rows in a
  * database. Just in case you forgot.
@@ -12,5 +17,31 @@ package DAO;
  *   foreign key (posted_by) references Account(account_id)
  */
 public class MessageDAO {
-    
+    public Message postMessage(Message message) {
+        Connection connection = ConnectionUtil.getConnection();
+
+        try {
+            String sql = "insert into message (posted_by, message_text, time_posted_epoch) values (?, ?, ?)";
+            PreparedStatement preparedStatement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+
+            // don't set message_id manually, should be automatically generated
+            preparedStatement.setInt(1, message.getPosted_by());
+            preparedStatement.setString(2, message.getMessage_text());
+            preparedStatement.setLong(3, message.getTime_posted_epoch());  // shouldn't this be set by the service/controller?
+            
+            preparedStatement.executeUpdate();
+            ResultSet pkeyResultSet = preparedStatement.getGeneratedKeys();
+            if (pkeyResultSet.next()) {
+                int generated_message_id = (int) pkeyResultSet.getLong(1);
+                return new Message(generated_message_id, 
+                                   message.getPosted_by(), 
+                                   message.getMessage_text(),
+                                   message.getTime_posted_epoch());
+            }
+        } catch(SQLException e) {
+            System.out.println(e.getMessage());
+        }
+
+        return null;
+    }
 }

@@ -71,6 +71,35 @@ public class AccountDAO {
     }
 
     /**
+     * Retrieves the account associated with a given account_id.
+     * 
+     * @param id The account_id to search for.
+     * @return an Account object with the account data associated with the given account_id, or null if it does not exist
+     */
+    public Account getAccount(int id) {
+        Connection connection = ConnectionUtil.getConnection();
+        
+        try {
+            String sql = "select * from account where account_id = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+
+            preparedStatement.setInt(1, id);
+
+            ResultSet rs = preparedStatement.executeQuery();
+            while(rs.next()) {
+                Account acc = new Account(rs.getInt("account_id"),
+                                          rs.getString("username"),
+                                          rs.getString("password"));
+                return acc;
+            }
+        } catch(SQLException e) {
+            System.out.println(e.getMessage());
+        }
+
+        return null;
+    }
+
+    /**
      * Retrieves the account associated with a given username and password.
      * 
      * @param username The username to match.
