@@ -84,8 +84,8 @@ public class MessageService {
      * The update of a message should be successful iff the message id already exists and the new message_text is 
      * not blank and is not over 255 characters.
      * 
-     * @param id 
-     * @param message_content
+     * @param id The message_id to search for.
+     * @param message_content The content to update the message with.
      * @return a Message object with the updated message
      */
     public Message updateMessageByID(int id, String message_content) {
@@ -100,5 +100,15 @@ public class MessageService {
         Message newMessage = this.messageDAO.getMessageByID(id);
 
         return result == 0 ? null : newMessage;
+    }
+
+    /**
+     * Returns a list of all messages posted by the given account_id, which may be empty.
+     * 
+     * @param account_id the account_id to search with
+     * @return a List<Message> of all messages posted by the given account_id, which may be empty
+     */
+    public List<Message> getMessagesByAccountID(int account_id) {
+        return this.messageDAO.getMessagesByAccountID(account_id);
     }
 }

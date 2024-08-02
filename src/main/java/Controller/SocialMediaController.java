@@ -23,6 +23,7 @@ import io.javalin.http.Context;
  * - GET localhost:8080/messages/{message_id}
  * - DELETE localhost:8080/messages/{message_id}
  * - PATCH localhost:8080/messages/{message_id}
+ * - GET localhost:8080/accounts/{account_id}/messages.
  * 
  * TODO: You will need to write your own endpoints and handlers for your controller. The endpoints you will need can be
  * found in readme.md as well as the test cases. You should refer to prior mini-project labs and lecture materials for 
@@ -47,10 +48,11 @@ public class SocialMediaController {
         app.post("/register", this::registrationHandler);
         app.post("/login", this::loginHandler);
         app.post("/messages", this::messagePostHandler);
-        app.get("/messages", this::messageGetHandler);
+        app.get("/messages", this::messagesGetHandler);
         app.get("/messages/{message_id}", this::messageGetByIDHandler);
         app.delete("/messages/{message_id}", this::messageDeleteByIDHandler);
         app.patch("/messages/{message_id}", this::messageUpdateByIDHandler);
+        app.get("/accounts/{account_id}/messages", this::messagesGetByAccountIDHandler);
 
         return app;
     }
@@ -148,7 +150,7 @@ public class SocialMediaController {
      * 
      * @param ctx The Javalin Context object manages information about both the HTTP request and response.
      */
-    private void messageGetHandler(Context ctx) {
+    private void messagesGetHandler(Context ctx) {
         List<Message> messages = messageService.getAllMessages();
         ctx.json(messages);
     }
@@ -207,7 +209,7 @@ public class SocialMediaController {
      * 
      * If the update of the message is not successful for any reason, the response status should be 400. (Client error)
      * 
-     * ctx The Javalin Context object manages information about both the HTTP request and response.
+     * @ctx The Javalin Context object manages information about both the HTTP request and response.
      * @throws JsonProcessingException will be thrown if there is an issue converting JSON into an object.
      */
     private void messageUpdateByIDHandler(Context ctx) throws JsonProcessingException {
@@ -229,6 +231,25 @@ public class SocialMediaController {
         } catch (Exception e) {
             System.out.println(e.getMessage());
             ctx.status(400);  // client error
+        }
+    }
+
+    /**
+     * GET /accounts/{account_id}/messages.
+     * 
+     * The response body should contain a JSON representation of a list containing all messages posted by a particular user, 
+     * which is retrieved from the database. It is expected for the list to simply be empty if there are no messages. 
+     * The response status should always be 200, which is the default.
+     * 
+     * @param ctx The Javalin Context object manages information about both the HTTP request and response.
+     */
+    private void messagesGetByAccountIDHandler(Context ctx) {
+        try {
+            int account_id = Integer.parseInt(ctx.pathParam("account_id"));
+            List<Message> messages = messageService.getMessagesByAccountID(account_id);
+            ctx.json(messages);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
         }
     }
 }
