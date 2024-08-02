@@ -1,5 +1,7 @@
 package Service;
 
+import java.util.List;
+
 import DAO.AccountDAO;
 import DAO.MessageDAO;
 import Model.Message;
@@ -42,5 +44,10 @@ public class MessageService {
         if (accountDAO.getAccount(message.getPosted_by()) == null) return null;
 
         return messageDAO.postMessage(message);
+    }
+
+
+    public List<Message> getAllMessages() {
+        return this.messageDAO.getAllMessages();
     }
 }

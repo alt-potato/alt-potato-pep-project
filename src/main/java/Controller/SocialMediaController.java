@@ -1,5 +1,7 @@
 package Controller;
 
+import java.util.List;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -17,6 +19,7 @@ import io.javalin.http.Context;
  * - POST localhost:8080/register
  * - POST localhost:8080/login
  * - POST localhost:8080/messages
+ * - GET localhost:8080/messages
  * 
  * TODO: You will need to write your own endpoints and handlers for your controller. The endpoints you will need can be
  * found in readme.md as well as the test cases. You should refer to prior mini-project labs and lecture materials for 
@@ -41,6 +44,7 @@ public class SocialMediaController {
         app.post("/register", this::registrationHandler);
         app.post("/login", this::loginHandler);
         app.post("/messages", this::messagePostHandler);
+        app.get("/messages", this::messageGetHandler);
 
         return app;
     }
@@ -101,7 +105,7 @@ public class SocialMediaController {
     }
 
     /**
-     * POST localhost:8080/messages
+     * POST /messages
      * 
      * The request body will contain a JSON representation of a message, which should be persisted to the database, 
      * but will not contain a message_id.
@@ -127,5 +131,20 @@ public class SocialMediaController {
         } else {
             ctx.status(400);  // unauthorized
         }
+    }
+
+    /**
+     * GET /messages
+     * 
+     * The response body should contain a JSON representation of a list containing all messages retrieved from the database. 
+     * It is expected for the list to simply be empty if there are no messages. The response status should always be 200, 
+     * which is the default.
+     * 
+     * @param ctx The Javalin Context object manages information about both the HTTP request and response.
+     * @throws JsonProcessingException will be thrown if there is an issue converting JSON into an object.
+     */
+    private void messageGetHandler(Context ctx) throws JsonProcessingException {
+        List<Message> messages = messageService.getAllMessages();
+        ctx.json(messages);
     }
 }

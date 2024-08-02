@@ -15,6 +15,12 @@ import Util.ConnectionUtil;
  *   password varchar(255)
  */
 public class AccountDAO {
+    /**
+     * Creates a new account.
+     * 
+     * @param account An Account object containing the data to create a new account, without an account_id.
+     * @return a Message object containing the required information, including a generated account_id
+     */
     public Account registerAccount(Account account) {
         Connection connection = ConnectionUtil.getConnection();
 
