@@ -109,4 +109,27 @@ public class MessageDAO {
 
         return null;
     }
+
+    /**
+     * Deletes the message associated with a given message_id.
+     * 
+     * @param id The message_id to search for.
+     * @return the number of rows affected
+     */
+    public int deleteMessageByID(int id) {
+        Connection connection = ConnectionUtil.getConnection();
+        
+        try {
+            String sql = "delete from message where message_id = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+
+            preparedStatement.setInt(1, id);
+
+            return preparedStatement.executeUpdate();
+        } catch(SQLException e) {
+            System.out.println(e.getMessage());
+        }
+
+        return 0;
+    }
 }

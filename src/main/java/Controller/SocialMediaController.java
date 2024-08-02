@@ -21,6 +21,7 @@ import io.javalin.http.Context;
  * - POST localhost:8080/messages
  * - GET localhost:8080/messages
  * - GET localhost:8080/messages/{message_id}
+ * - DELETE localhost:8080/messages/{message_id}
  * 
  * TODO: You will need to write your own endpoints and handlers for your controller. The endpoints you will need can be
  * found in readme.md as well as the test cases. You should refer to prior mini-project labs and lecture materials for 
@@ -47,6 +48,7 @@ public class SocialMediaController {
         app.post("/messages", this::messagePostHandler);
         app.get("/messages", this::messageGetHandler);
         app.get("/messages/{message_id}", this::messageGetByIDHandler);
+        app.delete("/messages/{message_id}", this::messageDeleteByIDHandler);
 
         return app;
     }
@@ -162,6 +164,28 @@ public class SocialMediaController {
         try {
             int message_id = Integer.parseInt(ctx.pathParam("message_id"));
             Message message = messageService.getMessageByID(message_id);
+            if (message != null) ctx.json(message);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    /**
+     * DELETE /messages/{message_id}
+     * 
+     * The deletion of an existing message should remove an existing message from the database. If the message existed, 
+     * the response body should contain the now-deleted message. The response status should be 200, which is the default.
+     * 
+     * If the message did not exist, the response status should be 200, but the response body should be empty. This is because 
+     * the DELETE verb is intended to be idempotent, ie, multiple calls to the DELETE endpoint should respond with the same 
+     * type of response.
+     * 
+     * @param ctx The Javalin Context object manages information about both the HTTP request and response.
+     */
+    private void messageDeleteByIDHandler(Context ctx) {
+        try {
+            int message_id = Integer.parseInt(ctx.pathParam("message_id"));
+            Message message = messageService.deleteMessageByID(message_id);
             if (message != null) ctx.json(message);
         } catch (Exception e) {
             System.out.println(e.getMessage());

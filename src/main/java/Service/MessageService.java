@@ -59,9 +59,22 @@ public class MessageService {
      * Retrieves the message associated with a given message_id.
      * 
      * @param id The message_id to search for.
-     * @return a Message object with the account data associated with the given message, or null if it does not exist
+     * @return a Message object with the data associated with the given message_id, or null if it does not exist
      */
     public Message getMessageByID(int id) {
         return this.messageDAO.getMessageByID(id);
+    }
+
+    /**
+     * Deletes the message associated with a given message_id.
+     * 
+     * @param id The message_id to search for.
+     * @return a Message object with the data associated with the deleted message, or null if no message was deleted
+     */
+    public Message deleteMessageByID(int id) {
+        Message message = this.messageDAO.getMessageByID(id);
+        int result = this.messageDAO.deleteMessageByID(id);
+
+        return result == 0 ? null : message;
     }
 }
