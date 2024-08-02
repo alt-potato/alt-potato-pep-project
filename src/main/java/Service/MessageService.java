@@ -46,8 +46,22 @@ public class MessageService {
         return messageDAO.postMessage(message);
     }
 
-
+    /**
+     * Returns a list of all messages.
+     * 
+     * @return a List<Message> containing all messages, which may be empty
+     */
     public List<Message> getAllMessages() {
         return this.messageDAO.getAllMessages();
+    }
+
+    /**
+     * Retrieves the message associated with a given message_id.
+     * 
+     * @param id The message_id to search for.
+     * @return a Message object with the account data associated with the given message, or null if it does not exist
+     */
+    public Message getMessageByID(int id) {
+        return this.messageDAO.getMessageByID(id);
     }
 }

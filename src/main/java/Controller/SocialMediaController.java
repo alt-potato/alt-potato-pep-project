@@ -20,6 +20,7 @@ import io.javalin.http.Context;
  * - POST localhost:8080/login
  * - POST localhost:8080/messages
  * - GET localhost:8080/messages
+ * - GET localhost:8080/messages/{message_id}
  * 
  * TODO: You will need to write your own endpoints and handlers for your controller. The endpoints you will need can be
  * found in readme.md as well as the test cases. You should refer to prior mini-project labs and lecture materials for 
@@ -45,6 +46,7 @@ public class SocialMediaController {
         app.post("/login", this::loginHandler);
         app.post("/messages", this::messagePostHandler);
         app.get("/messages", this::messageGetHandler);
+        app.get("/messages/{message_id}", this::messageGetByIDHandler);
 
         return app;
     }
@@ -141,10 +143,28 @@ public class SocialMediaController {
      * which is the default.
      * 
      * @param ctx The Javalin Context object manages information about both the HTTP request and response.
-     * @throws JsonProcessingException will be thrown if there is an issue converting JSON into an object.
      */
-    private void messageGetHandler(Context ctx) throws JsonProcessingException {
+    private void messageGetHandler(Context ctx) {
         List<Message> messages = messageService.getAllMessages();
         ctx.json(messages);
+    }
+
+    /**
+     * GET localhost:8080/messages/{message_id}
+     * 
+     * The response body should contain a JSON representation of the message identified by the message_id. It is expected 
+     * for the response body to simply be empty if there is no such message. The response status should always be 200, 
+     * which is the default.
+     * 
+     * @param ctx The Javalin Context object manages information about both the HTTP request and response.
+     */
+    private void messageGetByIDHandler(Context ctx) {
+        try {
+            int message_id = Integer.parseInt(ctx.pathParam("message_id"));
+            Message message = messageService.getMessageByID(message_id);
+            if (message != null) ctx.json(message);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
     }
 }

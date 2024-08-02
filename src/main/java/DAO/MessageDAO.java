@@ -80,4 +80,34 @@ public class MessageDAO {
 
         return messages;
     }
+
+    /**
+     * Retrieves the message associated with a given message_id.
+     * 
+     * @param id The message_id to search for.
+     * @return a Message object with the account data associated with the given message, or null if it does not exist
+     */
+    public Message getMessageByID(int id) {
+        Connection connection = ConnectionUtil.getConnection();
+        
+        try {
+            String sql = "select * from message where message_id = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+
+            preparedStatement.setInt(1, id);
+
+            ResultSet rs = preparedStatement.executeQuery();
+            while(rs.next()) {
+                Message message = new Message(rs.getInt("message_id"), 
+                                              rs.getInt("posted_by"),
+                                              rs.getString("message_text"),
+                                              rs.getLong("time_posted_epoch"));
+                return message;
+            }
+        } catch(SQLException e) {
+            System.out.println(e.getMessage());
+        }
+
+        return null;
+    }
 }
